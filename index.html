@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAMBOT – El Sótano de Sam</title>
+
+  <style>
+
+    body{
+      font-family: Arial, sans-serif;
+      margin:0;
+      background:#f4f6f4;
+    }
+
+    .chat-bubble{
+      position:fixed;
+      bottom:20px;
+      right:20px;
+      width:60px;
+      height:60px;
+      border-radius:50%;
+      background:#1f7a36;
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:22px;
+      cursor:pointer;
+      box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .chat-container{
+      position:fixed;
+      bottom:90px;
+      right:20px;
+      width:370px;
+      height:540px;
+      background:white;
+      border-radius:14px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.2);
+      display:flex;
+      flex-direction:column;
+      opacity:0;
+      pointer-events:none;
+      transform:translateY(20px);
+      transition:0.3s ease;
+      overflow:hidden;
+    }
+
+    .chat-container.active{
+      opacity:1;
+      pointer-events:auto;
+      transform:translateY(0);
+    }
+
+    .chat-header{
+      background:#1f7a36;
+      color:white;
+      padding:14px;
+      text-align:center;
+      font-weight:bold;
+      position:relative;
+    }
+
+    .close-btn{
+      position:absolute;
+      right:14px;
+      top:12px;
+      background:none;
+      border:none;
+      color:white;
+      font-size:16px;
+      cursor:pointer;
+    }
+
+    .messages{
+      flex:1;
+      padding:14px;
+      overflow-y:auto;
+      background:#f7f7f7;
+    }
+
+    .message{
+      margin:8px 0;
+      padding:10px;
+      border-radius:10px;
+      max-width:80%;
+      font-size:14px;
+      line-height:1.4;
+    }
+
+    .bot{ background:#e9ecef; }
+    .user{
+      background:#cdebd6;
+      margin-left:auto;
+    }
+
+    .button-container{
+      margin-top:8px;
+    }
+
+    .option-btn{
+      display:block;
+      width:100%;
+      margin:6px 0;
+      padding:8px;
+      border:none;
+      border-radius:6px;
+      background:#1f7a36;
+      color:white;
+      cursor:pointer;
+      font-size:13px;
+      text-align:left;
+    }
+
+    .option-btn:hover{
+      background:#155b28;
+    }
+
+    .input-area{
+      display:flex;
+      border-top:1px solid #ddd;
+    }
+
+    .input-area input{
+      flex:1;
+      padding:10px;
+      border:none;
+      outline:none;
+    }
+
+    .input-area button{
+      background:#1f7a36;
+      color:white;
+      border:none;
+      padding:10px 15px;
+      cursor:pointer;
+    }
+
+    .input-area button:hover{
+      background:#155b28;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<button class="chat-bubble" id="chatToggle">💬</button>
+
+<div class="chat-container" id="chatContainer">
+
+  <div class="chat-header">
+    SAMBOT 🌿
+    <button class="close-btn" id="closeChat">✖</button>
+  </div>
+
+  <div class="messages" id="messages"></div>
+
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Escribe tu pregunta...">
+    <button id="sendBtn">Enviar</button>
+  </div>
+
+</div>
+
+<script>
+
+const chatToggle = document.getElementById("chatToggle");
+const chatContainer = document.getElementById("chatContainer");
+const closeChat = document.getElementById("closeChat");
+const messages = document.getElementById("messages");
+const userInput = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+
+function addMessage(text, sender){
+  const div = document.createElement("div");
+  div.classList.add("message", sender);
+  div.textContent = text;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function addButtons(options){
+  const container = document.createElement("div");
+  container.classList.add("button-container");
+
+  options.forEach(option=>{
+    const btn = document.createElement("button");
+    btn.textContent = option.text;
+    btn.classList.add("option-btn");
+    btn.onclick = option.action;
+    container.appendChild(btn);
+  });
+
+  messages.appendChild(container);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+/* ===== MENÚ PRINCIPAL ===== */
+
+function mainMenu(){
+  addMessage(
+    "Hola 👋 Soy SAMBOT, el asistente de El Sótano de Sam. ¿En qué puedo ayudarte hoy?",
+    "bot"
+  );
+
+  addButtons([
+    { text:"🌿 Moda sostenible", action: modaMenu },
+    { text:"🚚 Envíos y rastreo", action: envios },
+    { text:"💳 Pagos", action: pagos },
+    { text:"🔄 Cambios y devoluciones", action: devoluciones },
+    { text:"📩 Soporte", action: soporte }
+  ]);
+}
+
+/* ===== MODA ===== */
+
+function modaMenu(){
+  addMessage(
+    "En El Sótano de Sam promovemos moda consciente. ¿Qué deseas saber?",
+    "bot"
+  );
+
+  addButtons([
+    { text:"¿Qué es moda sostenible?", action:()=>{
+      addMessage(
+        "La moda sostenible busca reducir el impacto ambiental mediante reutilización, consumo responsable y disminución del desperdicio textil.",
+        "bot"
+      );
+    }},
+    { text:"¿Por qué comprar segunda mano?", action:()=>{
+      addMessage(
+        "Comprar segunda mano prolonga la vida útil de las prendas y reduce la producción masiva asociada al fast fashion.",
+        "bot"
+      );
+    }},
+    { text:"¿Qué es fast fashion?", action:()=>{
+      addMessage(
+        "El fast fashion es la producción rápida y masiva de ropa, lo que genera altos niveles de contaminación y residuos textiles.",
+        "bot"
+      );
+    }},
+    { text:"⬅ Volver al menú", action: mainMenu }
+  ]);
+}
+
+/* ===== ENVÍOS ===== */
+
+function envios(){
+  addMessage(
+    "Realizamos envíos nacionales entre 2 y 5 días hábiles. Una vez despachado el pedido, recibirás un número de guía para hacer seguimiento directamente con la transportadora.",
+    "bot"
+  );
+}
+
+/* ===== PAGOS ===== */
+
+function pagos(){
+  addMessage(
+    "Aceptamos pagos digitales y transferencias bancarias. Trabajamos con pagos anticipados para garantizar seguridad en cada transacción.",
+    "bot"
+  );
+}
+
+/* ===== DEVOLUCIONES ===== */
+
+function devoluciones(){
+  addMessage(
+    "Si tu prenda presenta algún defecto, puedes solicitar cambio o devolución dentro de los primeros 3 días después de recibirla. Evaluamos cada caso para garantizar transparencia.",
+    "bot"
+  );
+}
+
+/* ===== SOPORTE ===== */
+
+function soporte(){
+  addMessage(
+    "Si necesitas atención personalizada, puedes escribirnos directamente a nuestro canal oficial de contacto. Estamos aquí para ayudarte.",
+    "bot"
+  );
+}
+
+/* ===== INPUT LIBRE ===== */
+
+function botResponse(text){
+
+  const lower = text.toLowerCase();
+
+  if(lower.includes("hola")) return mainMenu();
+  if(lower.includes("envio")) return envios();
+  if(lower.includes("pago")) return pagos();
+  if(lower.includes("devolucion")) return devoluciones();
+  if(lower.includes("moda")) return modaMenu();
+
+  addMessage(
+    "Puedo ayudarte con información sobre moda sostenible, envíos, pagos o cambios. También puedes usar los botones para navegar.",
+    "bot"
+  );
+}
+
+sendBtn.onclick = ()=>{
+  const value = userInput.value.trim();
+  if(!value) return;
+  addMessage(value,"user");
+  userInput.value="";
+  botResponse(value);
+};
+
+userInput.addEventListener("keypress", e=>{
+  if(e.key==="Enter") sendBtn.click();
+});
+
+chatToggle.onclick = ()=> chatContainer.classList.add("active");
+closeChat.onclick = ()=> chatContainer.classList.remove("active");
+
+mainMenu();
+
+</script>
+
+</body>
+</html>
