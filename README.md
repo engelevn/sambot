@@ -48,6 +48,6 @@ Angela Espinosa
 Tecnólogo en Análisis y Desarrollo de Software  
 SENA
 
-## 📌 Nota
+# Nota
 
 Este chatbot será integrado dentro del proyecto final “El Sótano de Sam” como parte de la sustentación final de la etapa lectiva.
